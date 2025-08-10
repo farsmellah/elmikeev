@@ -33,10 +33,26 @@ class WbImportService
             ]
         };
 
+        $lastPage = null;
+
         do
         {
-            $items = $this->client->fetch($resource, $apiParams, $page, $limit);
-            if ($items)
+
+            $label = $lastPage ? "{$page}/{$lastPage}" : (string)$page;
+            echo "[WB API][{$resource}] fetching page {$label} (limit={$limit})\n";
+
+            $fetchResult = $this->client->fetch($resource, $apiParams, $page, $limit);
+
+            $items  = $fetchResult['items'] ?? [];
+            $meta   = $fetchResult['meta'] ?? null;
+
+            if (is_array($meta) && isset($meta['last_page']))
+            {
+                $lastPage = (int)$meta['last_page'];
+            }
+
+
+            if (!empty($items))
             {
                 $now  = now();
 
