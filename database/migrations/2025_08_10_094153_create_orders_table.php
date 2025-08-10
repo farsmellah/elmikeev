@@ -10,6 +10,7 @@ return new class extends Migration {
         Schema::create('orders', function (Blueprint $table)
         {
             $table->id();
+            $table->string('payload_hash')->unique();
             $table->json('payload');
             $table->timestamps();
         });
